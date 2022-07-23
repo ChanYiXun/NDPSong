@@ -15,7 +15,8 @@ import java.util.ArrayList;
 public class ShowListActivity extends AppCompatActivity {
     Button btn5Star;
     ListView lv;
-    ArrayAdapter aa;
+    CustomAdapter ca;
+    ArrayList<Song> al;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,22 +25,50 @@ public class ShowListActivity extends AppCompatActivity {
 
         btn5Star = findViewById(R.id.btn5Star);
         lv = findViewById(R.id.lv);
+        al = new ArrayList<Song>();
 
-        ArrayList<Song> al = (ArrayList<Song>) getIntent().getSerializableExtra("al");
+        ca = new CustomAdapter(this, R.layout.rows, al);
+        lv.setAdapter(ca);
 
-        aa= new ArrayAdapter<Song>(this,android.R.layout.simple_list_item_1, al);
-        lv.setAdapter(aa);
+        DBHelper dbh = new DBHelper(ShowListActivity.this);
+        al.clear();
+        al.addAll(dbh.getAllSongs());
+        ca.notifyDataSetChanged();
 
-        lv.setOnClickListener(new  AdapterView.OnItemClickListener(){
+        btn5Star.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DBHelper dbh = new DBHelper(ShowListActivity.this);
+                al.clear();
+                int filterText = 5;
+                al.addAll(dbh.get5Star(filterText));
+
+                ca.notifyDataSetChanged();
+            }
+        });
+
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int
                     position, long identity) {
+
+
                 Song data = al.get(position);
-                Intent i = new Intent(EditActivity.this,
+                Intent i = new Intent(ShowListActivity.this,
                         EditActivity.class);
                 i.putExtra("data", data);
                 startActivity(i);
             }
         });
     }
-}
+        //to refresh list view after editing
+        @Override
+        protected void onResume() {
+            super.onResume();
+            DBHelper dbh = new DBHelper(ShowListActivity.this);
+            al.clear();
+            al.addAll(dbh.getAllSongs());
+            ca.notifyDataSetChanged();
+        }
+    }

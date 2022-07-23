@@ -10,6 +10,7 @@ public class Song implements Serializable {
     private int stars;
 
     public Song(int id, String title, String singer, int year, int stars) {
+        this.id = id;
         this.title = title;
         this.singer = singer;
         this.year = year;
@@ -32,16 +33,40 @@ public class Song implements Serializable {
         return year;
     }
 
-    public int getStars() {
-        return stars;
+    public int getStar() { return stars; }
+
+    private String getStar(int star) {
+        switch (star) {
+            case 1: return "*";
+
+            case 2: return "* *";
+
+            case 3: return "* * *";
+
+            case 4: return "* * * *";
+
+            case 5: return "* * * * *";
+
+            default: return "";
+        }
     }
 
-    @Override
-    public String toString() { return "ID:" + id
-            + "\nSinger:" + singer
-            + "\nTitle:" + title
-            + "\nYear:" + year
-            + "\nStar:" + stars; }
+    public void setTitle(String Title){
+        this.title = Title;
+    }
 
+    public void setSinger(String Singer){
+        this.singer = Singer;
+    }
+
+    public void setYear(int Year){
+        this.year = Year;
+    }
+
+    public void setStars(int Stars){
+        this.stars = Stars;
+    }
+
+    public String toString(){ return " " + getStar(stars); }
 }
 
